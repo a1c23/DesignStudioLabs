@@ -7,7 +7,8 @@
     "category": "tools",
     "date": "2026-05",
     "stack": "HTML/CSS/POJS",
-    "featured": true
+    "featured": true,
+    "thumbnail": "/projects/ai-voice-demo/thumb.png"
   },
   {
     "id": "DSL-002",

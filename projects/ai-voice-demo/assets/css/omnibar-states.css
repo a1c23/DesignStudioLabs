@@ -1,0 +1,694 @@
+/* ============================================================
+   Omnibar state system
+============================================================ */
+
+/* Persistent waveform — center-outward, tapered. Bars have inline `height` set
+   by waveform.js based on `scale`. clip-path drives the show/hide animation. */
+.omni-wf {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2.5px;
+  pointer-events: none;
+}
+.omni-wf__bar {
+  width: 2.5px;
+  background: var(--text-primary, #000);
+  border-radius: 5px;
+  clip-path: inset(50% 0 50% 0 round 5px);
+  will-change: clip-path, opacity;
+}
+
+/* Mic-button shell (every state's omni-host is one of these) */
+.mic-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  cursor: pointer;
+  transition: background-color 0.25s ease, border-radius 0.25s ease;
+}
+
+/* Mic-icon ↔ waveform crossfade with scale. Voice mode on <html> drives
+   the swap globally so every state's mic-button + dedicated wave-host
+   reveal their bars in unison. */
+.mic-btn .mic-icon,
+[data-omni-wave-host] .omni-wf,
+.mic-btn .omni-wf {
+  transform-origin: center;
+  transition:
+    opacity 320ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 320ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.mic-btn .mic-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 1;
+  transform: scale(1);
+}
+.omni-wf {
+  opacity: 0;
+  transform: scale(0.5);
+}
+[data-voice-mode] .mic-btn .mic-icon {
+  opacity: 0;
+  transform: scale(0.5);
+  pointer-events: none;
+}
+[data-voice-mode] .omni-wf {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* Mic-button visual when listening — flips to white so dark bars read. */
+[data-voice-mode] .action-pill { background: var(--bg-primary, #fff); }
+.action-pill .omni-wf__bar { background: #000; }
+
+/* Bar widths scale up for the orb */
+.state-omni-orb .omni-wf { gap: 6px; }
+.state-omni-orb .omni-wf__bar { width: 7px; border-radius: 8px; }
+
+/* ============================================================
+   State containers — visibility controlled by [data-omni-state]
+   on <html>
+============================================================ */
+.state-omni-hero,
+.state-omni-dock,
+.state-omni-transcript,
+.state-omni-orb {
+  transition: opacity 280ms cubic-bezier(0.22, 1, 0.36, 1),
+              transform 280ms cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: opacity, transform;
+}
+
+/* HERO — only visible in hero state */
+[data-omni-state="omni-hero"] .state-omni-dock,
+[data-omni-state="omni-hero"] .state-omni-transcript,
+[data-omni-state="omni-hero"] .state-omni-orb {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(8px);
+}
+
+[data-omni-state="omni-dock"] .state-omni-dock {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateX(-50%);
+  animation: dockEnter 320ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.state-omni-dock.is-leaving {
+  animation: dockExit 240ms cubic-bezier(0.4, 0, 1, 1) forwards;
+  pointer-events: none;
+}
+[data-omni-state="omni-transcript"] .state-omni-transcript {
+  opacity: 1;
+  pointer-events: auto;
+  transform: none;
+  animation: transcriptEnter 320ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.state-omni-transcript.is-leaving {
+  animation: transcriptExit 240ms cubic-bezier(0.4, 0, 1, 1) forwards;
+  pointer-events: none;
+}
+@keyframes transcriptEnter {
+  from { opacity: 0; transform: translateY(30px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes transcriptExit {
+  from { opacity: 1; transform: translateY(0); }
+  to   { opacity: 0; transform: translateY(-30px); }
+}
+[data-omni-state="omni-orb"] .state-omni-orb {
+  opacity: 1;
+  pointer-events: auto;
+  transform: none;
+  animation: fadeUp 380ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+[data-omni-state="omni-dock"] .state-omni-hero,
+[data-omni-state="omni-dock"] .state-omni-transcript,
+[data-omni-state="omni-dock"] .state-omni-orb,
+[data-omni-state="omni-transcript"] .state-omni-hero,
+[data-omni-state="omni-transcript"] .state-omni-dock,
+[data-omni-state="omni-transcript"] .state-omni-orb,
+[data-omni-state="omni-orb"] .state-omni-hero,
+[data-omni-state="omni-orb"] .state-omni-dock,
+[data-omni-state="omni-orb"] .state-omni-transcript {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(8px);
+}
+
+@keyframes dockEnter {
+  from { opacity: 0; transform: translate(-50%, 30px); }
+  to   { opacity: 1; transform: translate(-50%, 0); }
+}
+@keyframes dockExit {
+  from { opacity: 1; transform: translate(-50%, 0); }
+  to   { opacity: 0; transform: translate(-50%, -30px); }
+}
+
+/* Hero exit / re-entrance animations */
+.state-omni-hero.is-leaving {
+  animation: heroExit 240ms cubic-bezier(0.4, 0, 1, 1) forwards;
+  pointer-events: none;
+}
+.state-omni-hero.is-entering {
+  animation: heroEnter 320ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+@keyframes heroExit {
+  from { opacity: 1; transform: translateY(0); }
+  to   { opacity: 0; transform: translateY(-30px); }
+}
+@keyframes heroEnter {
+  from { opacity: 0; transform: translateY(30px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ============================================================
+   DOCK — at-rest bottom-center
+   Outer gray tray (theme bg, subtle border, 34px) wrapping
+   a chevron-back and an inner white pill (32px) that itself
+   holds the placeholder text + green send button.
+   Per Figma node 0:221 / I2209:123539;2134:29233.
+============================================================ */
+.state-omni-dock {
+  position: fixed;
+  left: 50%;
+  bottom: 24px;
+  transform: translateX(-50%);
+  z-index: 50;
+  width: 100%;
+  max-width: 360px;
+}
+/* Two rotating gradient layers ride behind the tray on pseudo-elements.
+   At rest both layers are opacity 0 and the tray shows its solid #EDE9EC.
+   When voice state flips, the relevant pseudo fades up + scales subtly in
+   over 320ms with easing. */
+@property --dock-grad-cw {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
+@property --dock-grad-ccw {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 360deg;
+}
+
+.state-omni-dock__tray {
+  position: relative;
+  isolation: isolate;
+  background-color: #EDE9EC;
+  border: 1px solid var(--border-subtle);
+  border-radius: 34px;
+  padding: 4px 4px 4px 6px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -4px rgba(0,0,0,0.1);
+  transition: background-color 1000ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* When the user is heard, the visible ring widens by shrinking the inner
+   pill — outer pill keeps its size, no layout shift on the page. */
+.state-omni-dock__pill,
+.omnibar__inner {
+  transform-origin: center;
+  transition: transform 320ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+[data-voice-state="user-speaking"] .state-omni-dock__pill {
+  transform: scale(0.94);
+}
+[data-voice-state="user-speaking"] .omnibar__inner {
+  transform: scale(0.985);
+}
+.state-omni-dock__tray > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* AI-speaking layer — green over navy, clockwise */
+/* Gradient pseudos apply to every "outer mask shell" in the omnibar
+   family — dock tray, hero pill, orb tray. */
+.state-omni-dock__tray::before,
+.state-omni-dock__tray::after,
+.omnibar::before,
+.omnibar::after,
+.state-omni-orb__tray::before,
+.state-omni-orb__tray::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  z-index: 0;
+  opacity: 0;
+  transition: opacity 320ms cubic-bezier(0.22, 1, 0.36, 1);
+  pointer-events: none;
+}
+.state-omni-dock__tray::before,
+.omnibar::before,
+.state-omni-orb__tray::before {
+  background: conic-gradient(
+    from var(--dock-grad-cw),
+    #1F8F3D 0deg,
+    #C8FFD0 130deg,
+    #4EDF61 240deg,
+    #E8FFEC 320deg,
+    #1F8F3D 360deg
+  );
+  animation: dockGradCW 4s linear infinite;
+}
+.state-omni-dock__tray::after,
+.omnibar::after,
+.state-omni-orb__tray::after {
+  background: conic-gradient(
+    from var(--dock-grad-ccw),
+    #ff7a00 0deg,
+    #ffd166 130deg,
+    #ff9a3c 240deg,
+    #ffb84d 320deg,
+    #ff7a00 360deg
+  );
+  animation: dockGradCCW 4s linear infinite;
+}
+
+[data-voice-state="ai-speaking"] .state-omni-dock__tray::before,
+[data-voice-state="ai-speaking"] .omnibar::before,
+[data-voice-state="ai-speaking"] .state-omni-orb__tray::before,
+[data-voice-state="user-speaking"] .state-omni-dock__tray::after,
+[data-voice-state="user-speaking"] .omnibar::after,
+[data-voice-state="user-speaking"] .state-omni-orb__tray::after {
+  opacity: 1;
+}
+
+/* User-speaking — shrink inner pill so the visible ring widens */
+[data-voice-state="user-speaking"] .state-omni-orb__inner {
+  transform: scale(0.94);
+}
+
+/* Voice mode — mic is live. Outer pill/tray goes solid green, gradient
+   overlays + user-speaking scale effect are suppressed. */
+[data-voice-mode] .state-omni-dock__tray,
+[data-voice-mode] .omnibar,
+[data-voice-mode] .state-omni-orb__tray {
+  background-color: var(--accent, #68e353);
+}
+[data-voice-mode] .state-omni-dock__tray::before,
+[data-voice-mode] .state-omni-dock__tray::after,
+[data-voice-mode] .omnibar::before,
+[data-voice-mode] .omnibar::after,
+[data-voice-mode] .state-omni-orb__tray::before,
+[data-voice-mode] .state-omni-orb__tray::after {
+  opacity: 0 !important;
+}
+[data-voice-mode] .state-omni-dock__pill,
+[data-voice-mode] .omnibar__inner,
+[data-voice-mode] .state-omni-orb__inner {
+  transform: scale(1) !important;
+}
+
+/* While the orb is the active state, the hero stays disabled — it doesn't
+   join the conversation visually (no green outer, no wave, no scale).
+   The orb is already an overlay on top; this just makes sure the hero
+   underneath doesn't animate. */
+[data-omni-state="omni-orb"] .state-omni-hero {
+  background-color: #EDE9EC !important;
+}
+[data-omni-state="omni-orb"] .state-omni-hero::before,
+[data-omni-state="omni-orb"] .state-omni-hero::after {
+  opacity: 0 !important;
+}
+[data-omni-state="omni-orb"] .state-omni-hero .mic-icon {
+  opacity: 1 !important;
+  transform: scale(1) !important;
+}
+[data-omni-state="omni-orb"] .state-omni-hero .omni-wf {
+  opacity: 0 !important;
+}
+[data-omni-state="omni-orb"] .state-omni-hero .omnibar__inner {
+  transform: scale(1) !important;
+}
+[data-omni-state="omni-orb"] .state-omni-hero .action-pill {
+  background: var(--accent) !important;
+}
+
+@keyframes dockGradCW  { to { --dock-grad-cw: 360deg; } }
+@keyframes dockGradCCW { to { --dock-grad-ccw: 0deg; } }
+.state-omni-dock__back {
+  width: 40px;
+  height: 40px;
+  border-radius: 9999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--neutral-800);
+  flex-shrink: 0;
+  transition: background 0.15s ease;
+}
+.state-omni-dock__back:hover { background: rgba(0,0,0,0.04); }
+.state-omni-dock__back .icon-host { width: 20px; height: 20px; }
+.state-omni-dock__pill {
+  flex: 1 0 0;
+  min-width: 0;
+  background: var(--bg-primary, #fff);
+  border-radius: 32px;
+  padding: 8px 8px 8px 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  overflow: hidden;
+}
+.state-omni-dock__field {
+  flex: 1 0 0;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 1px;
+  font-family: var(--font-sans);
+  font-weight: 300;
+  font-size: 16px;
+  line-height: 24px;
+  color: var(--text-tertiary);
+  white-space: nowrap;
+  overflow: hidden;
+}
+.state-omni-dock__field span { overflow: hidden; text-overflow: ellipsis; }
+.state-omni-dock__placeholder { flex: 1 0 0; min-width: 0; }
+.state-omni-dock__send {
+  width: 40px;
+  height: 40px;
+  border-radius: 9999px;
+  background: var(--accent);
+  color: #000;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  position: relative;
+  padding: 0 12px;
+}
+[data-voice-mode] .state-omni-dock__send { background: #fff; box-shadow: inset 0 0 0 2px var(--neutral-300); }
+.state-omni-dock__send .mic-icon { width: 20px; height: 20px; }
+
+@keyframes gradientSpin { to { transform: rotate(1turn); } }
+
+/* ============================================================
+   TRANSCRIPT — bottom-right card. Uses the same .omnibar shell as
+   the hero so it picks up the mask + voice-mode behavior for free.
+============================================================ */
+.state-omni-transcript {
+  position: fixed;
+  right: 56px;
+  bottom: 32px;
+  z-index: 50;
+  width: 320px;
+}
+/* Slot uses .omnibar as the outer mask shell. Constrain width here so the
+   .omnibar's width:100% picks up the 320px from the wrapper above. */
+.state-omni-transcript__pill {
+  width: 100%;
+}
+.state-omni-transcript__inner {
+  /* Inner white pill — same 30px radius the hero uses */
+  padding: 0;
+  overflow: hidden;
+}
+/* Chat-log: alternating user/AI bubbles. Starts at 220px and jumps
+   to 330px (50% taller) the first time content overflows; then
+   native scrollbar handles further growth. */
+.state-omni-transcript__chat {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 16px 14px 12px;
+  max-height: 220px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  transition: max-height 320ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.state-omni-transcript__chat.is-tall {
+  max-height: 330px;
+}
+.state-omni-transcript__chat::-webkit-scrollbar {
+  width: 6px;
+}
+.state-omni-transcript__chat::-webkit-scrollbar-thumb {
+  background: var(--neutral-400);
+  border-radius: 3px;
+}
+
+.chat-bubble {
+  font-family: var(--font-sans);
+  font-size: 13px;
+  line-height: 18px;
+  padding: 8px 12px;
+  border-radius: 14px;
+  max-width: 80%;
+  word-break: break-word;
+  white-space: pre-wrap;
+}
+.chat-bubble--ai {
+  align-self: flex-start;
+  background: var(--bg-secondary);
+  color: var(--neutral-800);
+  border-bottom-left-radius: 4px;
+}
+.chat-bubble--user {
+  align-self: flex-end;
+  background: var(--primary);
+  color: var(--text-inverted);
+  border-bottom-right-radius: 4px;
+}
+
+/* ============================================================
+   ORB — center floating circle with large waveform + dismiss
+============================================================ */
+.state-omni-orb {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 28px;
+  background: rgba(237,236,233,0.4);
+  backdrop-filter: blur(6px);
+}
+/* ORB outer tray — circular mask shell with the same gradient pseudos
+   as the dock and hero pills. */
+.state-omni-orb__tray {
+  position: relative;
+  isolation: isolate;
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  padding: 16px;
+  background-color: #EDE9EC;
+  border: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 30px 80px -20px rgba(0,0,0,0.25);
+  transition: background-color 1000ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.state-omni-orb__inner {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: var(--bg-primary, #fff);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform-origin: center;
+  transition: transform 320ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.state-omni-orb__inner .mic-icon { width: 56px; height: 56px; }
+.state-omni-orb__dismiss {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--bg-primary);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--neutral-800);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+.state-omni-orb__dismiss:hover { background: #f4f3f0; }
+
+/* ============================================================
+   Side-nav waveform trigger + popover
+============================================================ */
+.side-nav__waveform-trigger { color: var(--neutral-800); }
+.side-nav__waveform-trigger[aria-expanded="true"] {
+  background: var(--neutral-300);
+}
+
+.state-popover {
+  position: fixed;
+  z-index: 1000;
+  background: var(--bg-primary);
+  border: 1px solid var(--border-subtle);
+  border-radius: 18px;
+  padding: 12px;
+  box-shadow: 0 14px 40px -10px rgba(0,0,0,0.25), 0 4px 10px rgba(0,0,0,0.06);
+  min-width: 180px;
+  opacity: 0;
+  transform: translateY(4px);
+  transition: opacity 160ms ease, transform 160ms ease;
+}
+.state-popover.is-open {
+  opacity: 1;
+  transform: translateY(0);
+}
+.state-popover[hidden] { display: none; }
+.state-popover__label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-tertiary);
+  margin: 2px 6px 8px;
+}
+.state-popover__btns {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.state-popover__btn {
+  text-align: left;
+  padding: 8px 10px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--neutral-800);
+  cursor: pointer;
+  transition: background 0.12s ease;
+}
+.state-popover__btn:hover { background: var(--bg-secondary); }
+.state-popover__btn.is-active {
+  background: var(--neutral-300);
+  font-weight: 500;
+}
+
+.state-popover__divider {
+  height: 1px;
+  background: var(--border-subtle);
+  margin: 10px -4px;
+}
+
+/* ============================================================
+   Voice provider settings (in popover)
+============================================================ */
+.voice-settings { padding: 0 6px 4px; min-width: 240px; }
+.voice-settings__providers {
+  display: flex;
+  gap: 14px;
+  margin: 6px 0 10px;
+  font-size: 13px;
+}
+.voice-settings__providers label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  color: var(--neutral-800);
+}
+.voice-settings__key { margin-bottom: 8px; }
+#voice-key-input {
+  width: 100%;
+  font: inherit;
+  font-size: 13px;
+  padding: 8px 10px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  outline: none;
+}
+#voice-key-input:focus {
+  border-color: var(--neutral-500);
+  background: var(--bg-primary);
+}
+.voice-settings__masked {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  background: var(--bg-secondary);
+  font-size: 13px;
+  font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  color: var(--text-primary);
+  letter-spacing: 1px;
+}
+.voice-settings__masked code {
+  font: inherit;
+}
+.voice-settings__actions {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+.voice-settings__btn {
+  flex: 1 0 0;
+  padding: 7px 10px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  background: var(--bg-secondary);
+  color: var(--neutral-800);
+  cursor: pointer;
+  transition: background 0.12s ease;
+}
+.voice-settings__btn:hover { background: var(--neutral-300); }
+.voice-settings__btn--primary {
+  background: var(--neutral-950);
+  color: var(--text-inverted);
+}
+.voice-settings__btn--primary:hover { background: var(--neutral-800); }
+.voice-settings__status {
+  font-size: 12px;
+  color: var(--text-tertiary);
+  margin: 0;
+}
+.voice-settings__status[data-has="true"] { color: var(--green-500); }
+.voice-settings__warn {
+  font-size: 11px;
+  color: var(--text-tertiary);
+  margin: 8px 0 0;
+  line-height: 1.4;
+}
+
+/* ============================================================
+   Voice error toast
+============================================================ */
+.voice-error {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translate(-50%, 16px);
+  background: var(--neutral-950);
+  color: #fff;
+  padding: 10px 16px;
+  border-radius: 999px;
+  font-size: 13px;
+  z-index: 2000;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 200ms ease, transform 200ms cubic-bezier(0.22, 1, 0.36, 1);
+  box-shadow: 0 12px 32px -8px rgba(0,0,0,0.35);
+}
+.voice-error.is-visible {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}

@@ -1,0 +1,49 @@
+@font-face {
+  font-family: "ServiceNow Sans";
+  font-weight: 100;
+  font-style: normal;
+  font-display: swap;
+  src: url("../fonts/ServiceNowSans-Thin_6905965.ttf") format("truetype");
+}
+@font-face {
+  font-family: "ServiceNow Sans";
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+  src: url("../fonts/ServiceNowSans-Light_18922195.ttf") format("truetype");
+}
+@font-face {
+  font-family: "ServiceNow Sans";
+  font-weight: 350; /* "Book" */
+  font-style: normal;
+  font-display: swap;
+  src: url("../fonts/ServiceNowSans-Book_3724164709.ttf") format("truetype");
+}
+@font-face {
+  font-family: "ServiceNow Sans";
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+  src: url("../fonts/ServiceNowSans-Regular_3273201071.ttf") format("truetype");
+}
+@font-face {
+  font-family: "ServiceNow Sans";
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+  src: url("../fonts/ServiceNowSans-RegularItalic_4062149387.ttf") format("truetype");
+}
+@font-face {
+  font-family: "ServiceNow Sans";
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+  src: url("../fonts/ServiceNowSans-Medium_3053949501.ttf") format("truetype");
+}
+@font-face {
+  font-family: "ServiceNow Sans";
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+  src: url("../fonts/ServiceNowSans-Bold_3316267867.ttf") format("truetype");
+}

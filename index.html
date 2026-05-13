@@ -166,7 +166,7 @@
     function renderGal(f="all"){
       const list=f==="all"?P:P.filter(p=>p.category===f);
       document.getElementById("gal").innerHTML=list.map(p=>
-        `<a href="/projects/${p.slug}/" class="gi"><div class="gi-img"></div><span class="gi-id">${p.id}</span></a>`
+        `<a href="/projects/${p.slug}/" class="gi"><div class="gi-img">${p.thumbnail?`<img src="${p.thumbnail}" alt="${p.title}">`:""}</div><span class="gi-id">${p.id}</span></a>`
       ).join("");
     }
 

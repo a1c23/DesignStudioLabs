@@ -1,0 +1,83 @@
+/* Design tokens — sourced 1:1 from Figma variables */
+:root {
+  /* Color · neutrals */
+  --neutral-50: #f9f8f6;
+  --neutral-300: #e3e2df;
+  --neutral-400: #c2c1be;
+  --neutral-500: #8a8986;
+  --neutral-800: #343331;
+  --neutral-950: #171614;
+
+  /* Color · brand / semantic */
+  --primary: #00283c;
+  --primary-900: #143a50;
+  --primary-content: #ffffff;
+  --secondary: #e3e2df;
+  --secondary-content: #343331;
+  --accent: #68e353;
+  --accent-content: #000000;
+  --error: #e2161c;
+  --green-500: #009b60;
+  --orange-300: #ff9955;
+  --orange-950: #461500;
+  --indigo-200: #c5c5ff;
+
+  /* Color · surface / text */
+  --bg-theme: #edece9;
+  --bg-primary: #ffffff;
+  --bg-secondary: #f4f3f0;
+  --bg-tertiary: #edece9;
+  --surface-primary: #ffffff;
+  --text-primary: #000000;
+  --text-tertiary: #656462;
+  --text-inverted: #ffffff;
+  --border-subtle: #e3e2df;
+
+  /* Type scale */
+  --font-sans: "ServiceNow Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+
+  --fs-xs: 12px;
+  --fs-sm: 14px;
+  --fs-base: 16px;
+  --fs-lg: 18px;
+  --fs-2xl: 24px;
+  --fs-3xl: 30px;
+  --fs-4xl: 36px;
+
+  --lh-sm: 20px;
+  --lh-base: 24px;
+  --lh-7: 28px;
+  --lh-3xl: 36px;
+  --lh-4xl: 40px;
+
+  /* Radii — names mirror Figma's tokens.
+     Use --radius-field for buttons/inputs/tabs (12)
+     and --radius-box for cards (32).
+     The --r-* aliases are kept for legacy callers but should be retired. */
+  --radius-sm: 4px;     /* rounded-sm */
+  --radius-md: 8px;     /* rounded-lg in Figma */
+  --radius-field: 12px; /* rounded-xl / buttons / tabs */
+  --radius-2xl: 16px;
+  --radius-3xl: 24px;   /* rounded-3xl */
+  --radius-box: 32px;   /* rounded-4xl / cards */
+  --radius-full: 9999px;
+
+  /* Legacy aliases — will be removed once consumers migrate */
+  --r-sm: var(--radius-sm);
+  --r-md: var(--radius-md);
+  --r-lg: var(--radius-field);
+  --r-xl: var(--radius-2xl);
+  --r-3xl: var(--radius-3xl);
+  --r-4xl: var(--radius-box);
+  --r-full: var(--radius-full);
+
+  /* Shadows */
+  --shadow-2xs: 0 1px 0 rgba(0,0,0,0.05);
+  --shadow-sm: 0 1px 2px -1px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.1);
+  --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -4px rgba(0,0,0,0.1);
+
+  /* Layout */
+  --side-nav-w: 52px;
+  --container-3xl: 768px;
+  --container-7xl: 1280px;
+}
