@@ -1,6 +1,6 @@
 [
   {
-    "id": "DSL-001",
+    "id": "NL-001",
     "slug": "ai-voice-demo",
     "title": "AI Voice Demo",
     "desc": "Demo of AI Voice interactive functionality. Animated waveform visualization.",
@@ -11,7 +11,7 @@
     "thumbnail": "/projects/ai-voice-demo/thumb.png"
   },
   {
-    "id": "DSL-002",
+    "id": "NL-002",
     "slug": "lotti-inspector",
     "title": "LOTTI Inspector",
     "desc": "Music curation tool for fitness instructors. Tag songs by BPM, intensity, and vibe. Generates class playlists from structured prompts.",
@@ -20,7 +20,7 @@
     "stack": "TypeScript · Node.js"
   },
   {
-    "id": "DSL-003",
+    "id": "NL-003",
     "slug": "rebelboater-dashboard",
     "title": "RebelBoater Dashboard",
     "desc": "Marine utility platform for San Diego boaters. Tides, weather, fuel pricing, and marina availability in one view.",
@@ -29,7 +29,7 @@
     "stack": "TypeScript · Maps API"
   },
   {
-    "id": "DSL-004",
+    "id": "NL-004",
     "slug": "local-llm-workspace",
     "title": "Local LLM Workspace",
     "desc": "Personal AIOS — local model routing, task queuing, and context window management running Ollama models with smart dispatch.",
@@ -38,7 +38,7 @@
     "stack": "Ollama · Node.js"
   },
   {
-    "id": "DSL-005",
+    "id": "NL-005",
     "slug": "spectercraft-cms",
     "title": "Spectercraft CMS",
     "desc": "Headless content management layer with AI-assisted writing, structured field schemas, and multi-tenant publishing.",

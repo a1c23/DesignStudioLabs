@@ -1,4 +1,4 @@
-# Design Studio Labs
+# NowLabs
 
 A working archive of prototypes, experiments, and early-stage builds. Not a portfolio of finished work — a living document updated as things evolve.
 
@@ -24,7 +24,7 @@ A working archive of prototypes, experiments, and early-stage builds. Not a port
 
 ```json
 {
-  "id": "DSL-006",
+  "id": "NL-006",
   "slug": "my-project",
   "title": "My Project",
   "desc": "Short description.",
