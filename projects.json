@@ -45,5 +45,15 @@
     "category": "tools",
     "date": "2025-07",
     "stack": "Claude API · TypeScript"
+  },
+  {
+    "id": "NL-006",
+    "slug": "content-generator-app",
+    "title": "Content Generator",
+    "desc": "AI-driven content generation system. Transforms client interviews into marketing content using Hormozi value frameworks and Godin storytelling principles.",
+    "category": "tools",
+    "date": "2025-07",
+    "stack": "React · Tailwind · Claude API",
+    "thumbnail": "/projects/content-generator-app/thumb.png"
   }
 ]
