@@ -49,8 +49,8 @@
   {
     "id": "NL-006",
     "slug": "content-generator-app",
-    "title": "Content Generator",
-    "desc": "AI-driven content generation system. Transforms client interviews into marketing content using Hormozi value frameworks and Godin storytelling principles.",
+    "title": "Scene Creator",
+    "desc": "3D scene composition tool. Build and customize product scenes with materials, lighting, and camera controls.",
     "category": "tools",
     "date": "2025-07",
     "stack": "React · Tailwind · Claude API",
