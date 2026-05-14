@@ -4,7 +4,7 @@
     "slug": "ai-voice-demo",
     "title": "AI Voice Demo",
     "desc": "Demo of AI Voice interactive functionality. Animated waveform visualization.",
-    "category": "tools",
+    "category": "motion",
     "date": "2026-05",
     "stack": "HTML/CSS/POJS",
     "featured": true,
