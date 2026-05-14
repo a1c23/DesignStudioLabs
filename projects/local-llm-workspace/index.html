@@ -77,7 +77,7 @@
       }
       // Check for app.html (real prototype)
       fetch("app.html",{method:"HEAD"}).then(r=>{
-        if(r.ok) html+=`<a href="app.html" class="stage-launch">Launch Prototype</a>`;
+        if(r.ok) html+=`<a href="app.html" target="_blank" rel="noopener" class="stage-launch">Launch Prototype</a>`;
         sc.innerHTML=html;
       }).catch(()=>{sc.innerHTML=html;});
 
