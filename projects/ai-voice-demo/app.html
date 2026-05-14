@@ -1,0 +1,798 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Now — AI Voice Prototype</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23000'/%3E%3Cpath d='M10 14h2v4h-2zM14 10h2v12h-2zM18 12h2v8h-2zM22 14h2v4h-2z' fill='%2368e353'/%3E%3C/svg%3E" />
+  <link rel="stylesheet" href="./assets/css/fonts.css" />
+  <link rel="stylesheet" href="./assets/css/tokens.css" />
+  <link rel="stylesheet" href="./assets/css/styles.css" />
+  <link rel="stylesheet" href="./assets/css/omnibar-states.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.12.2/lottie.min.js"></script>
+  <script src="./assets/js/voice/chatgpt-voice.js"></script>
+  <script src="./assets/js/voice/gemini-voice.js"></script>
+</head>
+<body>
+  <div class="app">
+
+    <!-- ============================================ -->
+    <!-- Side Navigation (Horizon 2 — slim 52px)      -->
+    <!-- ============================================ -->
+    <aside class="side-nav" aria-label="Primary">
+      <div class="side-nav__top">
+        <div class="side-nav__menu">
+          <button class="side-nav__menu-btn" aria-label="Menu">
+            <span class="icon-host" data-svg="horizon/menu"></span>
+          </button>
+          <!-- Logo flyout to the right of menu (only renders when nav expanded) -->
+          <div class="side-nav__logo-container" hidden>
+            <div class="sn-logo">
+              <img src="./assets/img/logo-l1.svg" style="position:absolute;left:0.01px;top:3.96px;width:7.191px;height:9.179px;" alt="" />
+              <img src="./assets/img/logo-l2.svg" style="position:absolute;left:7.65px;top:3.96px;width:8.643px;height:9.167px;" alt="" />
+              <img src="./assets/img/logo-l3.svg" style="position:absolute;left:17.32px;top:4.05px;width:5.565px;height:8.9px;" alt="" />
+              <img src="./assets/img/logo-l4.svg" style="position:absolute;left:23.67px;top:4.14px;width:9.936px;height:8.813px;" alt="" />
+              <img src="./assets/img/logo-l5.svg" style="position:absolute;left:34.05px;top:0;width:3.09px;height:3.017px;" alt="" />
+              <img src="./assets/img/logo-l6.svg" style="position:absolute;left:34.42px;top:4.14px;width:2.411px;height:8.813px;" alt="" />
+              <img src="./assets/img/logo-l7.svg" style="position:absolute;left:38.02px;top:3.97px;width:8.775px;height:9.17px;" alt="" />
+              <img src="./assets/img/logo-l8.svg" style="position:absolute;left:47.17px;top:3.97px;width:8.621px;height:9.167px;" alt="" />
+              <img src="./assets/img/logo-l9.svg" style="position:absolute;left:56.73px;top:3.96px;width:8.92px;height:8.992px;" alt="" />
+              <img src="./assets/img/logo-l10.svg" style="position:absolute;left:66.55px;top:3.97px;width:10.51px;height:9.177px;" alt="" />
+              <img src="./assets/img/logo-l11.svg" style="position:absolute;left:76.46px;top:4.14px;width:14.596px;height:8.813px;" alt="" />
+            </div>
+          </div>
+        </div>
+
+        <nav class="side-nav__stack">
+          <button class="side-nav__btn" data-nav="home" data-svg-outline="horizon/home-outline" data-svg-fill="horizon/home-fill" aria-label="Home">
+            <span class="icon-host" data-svg="horizon/home-outline"></span>
+          </button>
+          <button class="side-nav__btn" aria-label="Profile">
+            <span class="icon-host" data-svg="horizon/id"></span>
+          </button>
+          <button class="side-nav__btn" aria-label="Edit">
+            <span class="icon-host" data-svg="horizon/pencil-page"></span>
+          </button>
+          <button class="side-nav__btn" aria-label="History">
+            <span class="icon-host" data-svg="horizon/history"></span>
+          </button>
+
+          <div class="side-nav__divider" role="separator"></div>
+
+          <button class="side-nav__btn" aria-label="Search">
+            <span class="icon-host" data-svg="horizon/magnifying-glass"></span>
+          </button>
+          <button class="side-nav__btn" data-nav="canvas" data-svg-outline="horizon/canvas-outline" data-svg-fill="horizon/canvas-outline" aria-label="Canvas">
+            <span class="icon-host" data-svg="horizon/canvas-outline"></span>
+          </button>
+          <button class="side-nav__btn" data-nav="inbox" data-svg-outline="horizon/inbox-fill" data-svg-fill="horizon/inbox-fill" aria-label="Inbox">
+            <span class="icon-host" data-svg="horizon/inbox-fill"></span>
+          </button>
+          <button class="side-nav__btn" aria-label="Tree">
+            <span class="icon-host" data-svg="horizon/tree"></span>
+          </button>
+
+          <div class="side-nav__divider" role="separator"></div>
+
+          <button class="side-nav__btn side-nav__waveform-trigger" id="omni-state-trigger" aria-haspopup="true" aria-expanded="false" aria-label="Switch omnibar state">
+            <span class="icon-host" data-svg="sound-wave"></span>
+          </button>
+        </nav>
+      </div>
+
+      <!-- Profile avatar at the bottom -->
+      <div class="side-nav__bottom">
+        <div class="side-nav__profile">
+          <img class="side-nav__avatar-img" src="./assets/icons/horizon/avatar-renee.png" alt="" />
+        </div>
+      </div>
+    </aside>
+
+    <!-- State picker popover (anchored to side-nav waveform button) -->
+    <div class="state-popover" id="omni-state-popover" role="menu" hidden>
+      <p class="state-popover__label">Omnibar state</p>
+      <div class="state-popover__btns">
+        <button class="state-popover__btn is-active" data-state="omni-hero">Hero</button>
+        <button class="state-popover__btn" data-state="omni-dock">Dock</button>
+        <button class="state-popover__btn" data-state="omni-transcript">Transcript</button>
+        <button class="state-popover__btn" data-state="omni-orb">Orb</button>
+      </div>
+
+      <div class="state-popover__divider" role="separator"></div>
+
+      <div class="voice-settings" id="voice-settings">
+        <p class="state-popover__label">Voice provider</p>
+        <div class="voice-settings__providers">
+          <label><input type="radio" name="voice-provider" value="openai" checked /> OpenAI</label>
+          <label><input type="radio" name="voice-provider" value="gemini" /> Gemini</label>
+        </div>
+        <div class="voice-settings__key">
+          <input type="password" id="voice-key-input" autocomplete="off" spellcheck="false" placeholder="Enter API key" />
+          <div class="voice-settings__masked" id="voice-key-mask" hidden>
+            <code id="voice-key-mask-text"></code>
+          </div>
+        </div>
+        <div class="voice-settings__actions">
+          <button id="voice-key-save" class="voice-settings__btn voice-settings__btn--primary">Save key</button>
+          <button id="voice-key-clear" class="voice-settings__btn" hidden>Clear</button>
+        </div>
+        <p id="voice-key-status" class="voice-settings__status">No key set</p>
+        <p class="voice-settings__warn">Stored in this browser only. Don't share screenshots with the key visible.</p>
+      </div>
+    </div>
+
+    <!-- Voice error banner -->
+    <div id="voice-error" class="voice-error" role="status" aria-live="polite"></div>
+
+    <!-- ============================================ -->
+    <!-- Main Content                                 -->
+    <!-- ============================================ -->
+    <main class="content">
+
+      <!-- ============== HOME VIEW ============== -->
+      <section class="view view--home" data-view="home" aria-label="Home">
+        <div class="home-header">
+          <div class="home-header__inner">
+            <div class="greeting fade-up">
+              <img class="greeting__mark" src="./assets/img/sparkmoji.svg" alt="" />
+              <p class="greeting__text">Start your day right, Andrea</p>
+            </div>
+
+            <!-- HERO state container — primary on-page omnibar -->
+            <div class="state-omni-hero omnibar fade-up fade-up-delay-1">
+              <div class="omnibar__inner">
+                <div class="omnibar__text-row">
+                  <div class="omnibar__text">
+                    <span class="omnibar__prefix">Ask Otto,</span>
+                    <div class="omnibar__carousel">
+                      <div class="omnibar__carousel-track">
+                        <p class="omnibar__carousel-item">&ldquo;List my tasks that are due today&rdquo;</p>
+                        <p class="omnibar__carousel-item">&ldquo;What is the next company holiday?&rdquo;</p>
+                        <p class="omnibar__carousel-item">&ldquo;Parental leave&rdquo;</p>
+                        <p class="omnibar__carousel-item">&ldquo;How can I update my benefits?&rdquo;</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="omnibar__actions">
+                  <div class="omnibar__lh">
+                    <button class="btn-ghost btn-circle" aria-label="Add">
+                      <span class="icon-host" data-svg="plus"></span>
+                    </button>
+                  </div>
+                  <button class="action-pill mic-btn state-omni-hero__mic" id="hero-mic-btn" aria-label="Voice input" data-omni-host="omni-hero" data-omni-wave-host="omni-hero">
+                    <span class="mic-icon icon-host" data-svg="microphone"></span>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div class="prompts fade-up fade-up-delay-2">
+              <button class="prompt-card" style="width: 194px;">Draft a knowledge article</button>
+              <button class="prompt-card" style="width: 207px;">Write an incident summary</button>
+              <button class="prompt-card" style="width: 165px;">Create a new widget</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3-column row -->
+        <div class="home-grid fade-up fade-up-delay-3">
+
+          <!-- LEFT — Inbox summary -->
+          <div class="home-col">
+            <div class="col-inbox-slot">
+              <article class="inbox-summary">
+                <div class="inbox-summary__head">
+                  <p class="inbox-summary__title">Inbox</p>
+                  <button class="inbox-summary__expand" aria-label="Open inbox" data-nav="inbox">
+                    <span class="icon-host" data-icon="arrow-up-right"></span>
+                  </button>
+                </div>
+                <div class="inbox-summary__body">
+                  <p class="inbox-summary__lede">
+                    <em>5 to-dos</em> need attention. 1 is overdue and 1 is due soon.
+                  </p>
+                  <div class="inbox-tasks">
+                    <div class="inbox-task">
+                      <div class="inbox-task__badge-row">
+                        <span class="badge badge--error">Overdue 3 days</span>
+                      </div>
+                      <div class="inbox-task__row">
+                        <p class="inbox-task__title">HR approval: Compensation change request</p>
+                        <img class="inbox-task__avatar" src="./assets/img/avatar-hr.png" alt="" />
+                      </div>
+                    </div>
+                    <div class="inbox-task">
+                      <div class="inbox-task__badge-row">
+                        <span class="badge badge--warn">Due in 3 days</span>
+                      </div>
+                      <div class="inbox-task__row">
+                        <p class="inbox-task__title">IT approval: 16-inch MacBook Pro - Apple M5 Pro chip</p>
+                        <div class="inbox-task__icon-stack">
+                          <img class="macbook" src="./assets/img/macbook.png" alt="" />
+                          <span class="vendor-pip"><img src="./assets/img/vendor-badge.png" alt="" /></span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </article>
+            </div>
+          </div>
+
+          <!-- CENTER — Brain Break carousel + quick actions -->
+          <div class="home-col col-center">
+            <article class="carousel-card">
+              <div class="carousel-figure">
+                <div class="carousel-media">
+                  <img src="./assets/img/brain-break-photo.png" alt="" />
+                  <div style="position:absolute;inset:0;background:rgba(0,0,0,0.18);"></div>
+                </div>
+              </div>
+              <div class="carousel-body">
+                <p class="carousel-body__title">Join us on March 17 for our first Brain Break of 2026!</p>
+                <p class="carousel-body__copy">We're lucky to be part of a team full of people who care deeply about the work we do and the impact it has.</p>
+              </div>
+              <div class="carousel-pagination">
+                <span class="carousel-dot is-active"></span>
+                <span class="carousel-dot"></span>
+                <span class="carousel-dot"></span>
+              </div>
+            </article>
+
+            <article class="actions-card">
+              <div class="actions-row">
+                <button class="action-tile">
+                  <span class="action-tile__icon"><span class="icon-host" data-svg="circle-question"></span></span>
+                  <span class="action-tile__label">Ask HR question</span>
+                </button>
+                <button class="action-tile">
+                  <span class="action-tile__icon"><img src="./assets/img/company-feed.svg" alt="" /></span>
+                  <span class="action-tile__label">Our company</span>
+                </button>
+              </div>
+              <div class="actions-row">
+                <button class="action-tile">
+                  <span class="action-tile__icon"><img src="./assets/img/password-reset.svg" alt="" /></span>
+                  <span class="action-tile__label">Password reset</span>
+                </button>
+                <button class="action-tile">
+                  <span class="action-tile__icon"><img src="./assets/img/airplane-take-off.svg" alt="" /></span>
+                  <span class="action-tile__label">Request travel visa</span>
+                </button>
+              </div>
+            </article>
+          </div>
+
+          <!-- RIGHT — Popular content + Holiday widget -->
+          <div class="home-col col-right">
+            <article class="popular-card">
+              <div class="popular-card__head">
+                <h3>Popular content</h3>
+              </div>
+              <div class="popular-card__body">
+                <div class="popular-row">
+                  <div class="popular-tile">
+                    <p class="popular-tile__title">Q2 budget guidelines</p>
+                    <p class="popular-tile__meta">
+                      <span class="icon-host" data-icon="eye"></span>
+                      <span>45.5k views</span>
+                    </p>
+                  </div>
+                  <div class="popular-tile">
+                    <p class="popular-tile__title">Travel expense policy</p>
+                    <p class="popular-tile__meta">
+                      <span class="icon-host" data-icon="eye"></span>
+                      <span>38k views</span>
+                    </p>
+                  </div>
+                </div>
+                <div class="popular-tile popular-tile--full">
+                  <p class="popular-tile__title">Password reset assistance</p>
+                  <p class="popular-tile__meta">
+                    <span class="icon-host" data-icon="fire"></span>
+                    <span>12.5k requests</span>
+                  </p>
+                </div>
+              </div>
+            </article>
+
+            <article class="holiday">
+              <div class="holiday__date">
+                <div class="holiday__date-card">
+                  <p class="holiday__month">May</p>
+                  <p class="holiday__day">25</p>
+                </div>
+              </div>
+              <div class="holiday__body">
+                <p class="holiday__kicker">Upcoming holiday</p>
+                <div>
+                  <p class="holiday__name">Memorial Day</p>
+                  <p class="holiday__date-line">Monday, May 25, 2026</p>
+                </div>
+              </div>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============== CANVAS VIEW ============== -->
+      <section class="canvas-view view" data-view="canvas" aria-label="Canvas">
+        <div class="canvas-view__inner">
+          <header class="canvas-header fade-up">
+            <div class="canvas-header__text">
+              <h1 class="canvas-header__title">Canvas</h1>
+              <p class="canvas-header__subtitle">Your space to organize the things that are important to you.</p>
+            </div>
+            <button class="canvas-header__edit" aria-label="Edit canvas">
+              <span class="icon-host" data-svg="pencil-page"></span>
+            </button>
+          </header>
+
+          <div class="canvas-grid">
+
+            <!-- Column 1 -->
+            <div class="canvas-col">
+
+              <!-- Featured apps (248h) -->
+              <article class="cv-card cv-card--featured-apps fade-up fade-up-delay-1">
+                <header class="cv-card__head">
+                  <h3>Featured apps</h3>
+                  <button class="cv-card__more" aria-label="More"><span class="icon-host" data-svg="arrow-right"></span></button>
+                </header>
+                <div class="cv-apps">
+                  <div class="cv-app"><div class="cv-app__icon cv-app__icon--outlook">O</div><span>Outlook</span></div>
+                  <div class="cv-app"><div class="cv-app__icon cv-app__icon--workday">W</div><span>Workday</span></div>
+                  <div class="cv-app"><div class="cv-app__icon cv-app__icon--zoom">Z</div><span>Zoom</span></div>
+                  <div class="cv-app"><div class="cv-app__icon cv-app__icon--teams">T</div><span>Teams</span></div>
+                  <div class="cv-app"><div class="cv-app__icon cv-app__icon--fidelity">F</div><span>Fidelity</span></div>
+                  <div class="cv-app"><div class="cv-app__icon cv-app__icon--adp">A</div><span>ADP</span></div>
+                </div>
+              </article>
+
+              <!-- Popular content (322h) -->
+              <article class="cv-card cv-card--popular fade-up fade-up-delay-2">
+                <header class="cv-card__head">
+                  <h3>Popular content</h3>
+                  <button class="cv-card__more" aria-label="More"><span class="icon-host" data-svg="arrow-right"></span></button>
+                </header>
+                <ul class="cv-list">
+                  <li class="cv-list__item">
+                    <div class="cv-list__thumb"></div>
+                    <div class="cv-list__body">
+                      <p class="cv-list__title">Lorem ipsum dolor</p>
+                      <p class="cv-list__copy">Lorem ipsum dolor sit amet consectetur pelle…</p>
+                    </div>
+                  </li>
+                  <li class="cv-list__item">
+                    <div class="cv-list__thumb"></div>
+                    <div class="cv-list__body">
+                      <p class="cv-list__title">Lorem ipsum dolor</p>
+                      <p class="cv-list__copy">Lorem ipsum dolor sit amet consectetur pelle…</p>
+                    </div>
+                  </li>
+                  <li class="cv-list__item">
+                    <div class="cv-list__thumb cv-list__thumb--icon"><span class="icon-host" data-svg="circle-question"></span></div>
+                    <div class="cv-list__body">
+                      <p class="cv-list__title">Lorem ipsum dolor</p>
+                      <p class="cv-list__copy">Lorem ipsum dolor sit amet consectetur pelle…</p>
+                    </div>
+                  </li>
+                  <li class="cv-list__item">
+                    <div class="cv-list__thumb cv-list__thumb--icon"><span class="icon-host" data-svg="circle-question"></span></div>
+                    <div class="cv-list__body">
+                      <p class="cv-list__title">Lorem ipsum dolor</p>
+                      <p class="cv-list__copy">Lorem ipsum dolor sit amet consectetur pelle…</p>
+                    </div>
+                  </li>
+                </ul>
+              </article>
+
+              <!-- Quick links (344h) -->
+              <article class="cv-card cv-card--quick-links fade-up fade-up-delay-3">
+                <header class="cv-card__head">
+                  <h3>Quick links</h3>
+                  <button class="cv-card__more" aria-label="More"><span class="icon-host" data-svg="arrow-right"></span></button>
+                </header>
+                <div class="cv-quick-grid">
+                  <div class="cv-quick"><div class="cv-quick__img"></div><p>Lorem ipsum elementum do…</p></div>
+                  <div class="cv-quick"><div class="cv-quick__img"></div><p>Lorem ipsum elementum do…</p></div>
+                  <div class="cv-quick"><div class="cv-quick__img"></div><p>Lorem ipsum elementum do…</p></div>
+                  <div class="cv-quick"><div class="cv-quick__img"></div><p>Lorem ipsum elementum do…</p></div>
+                  <div class="cv-quick"><div class="cv-quick__img"></div><p>Lorem ipsum elementum do…</p></div>
+                  <div class="cv-quick"><div class="cv-quick__img"></div><p>Lorem ipsum elementum do…</p></div>
+                </div>
+              </article>
+            </div>
+
+            <!-- Column 2 -->
+            <div class="canvas-col">
+
+              <!-- Quick links (344h) -->
+              <article class="cv-card cv-card--quick-links fade-up fade-up-delay-1">
+                <header class="cv-card__head">
+                  <h3>Quick links</h3>
+                  <button class="cv-card__more" aria-label="More"><span class="icon-host" data-svg="arrow-right"></span></button>
+                </header>
+                <div class="cv-quick-grid">
+                  <div class="cv-quick"><div class="cv-quick__img"></div><p>Lorem ipsum elementum do…</p></div>
+                  <div class="cv-quick"><div class="cv-quick__img"></div><p>Lorem ipsum elementum do…</p></div>
+                  <div class="cv-quick"><div class="cv-quick__img"></div><p>Lorem ipsum elementum do…</p></div>
+                  <div class="cv-quick"><div class="cv-quick__img"></div><p>Lorem ipsum elementum do…</p></div>
+                  <div class="cv-quick"><div class="cv-quick__img"></div><p>Lorem ipsum elementum do…</p></div>
+                  <div class="cv-quick"><div class="cv-quick__img"></div><p>Lorem ipsum elementum do…</p></div>
+                </div>
+              </article>
+
+              <!-- Recent chat update (248h) -->
+              <article class="cv-card cv-card--recent fade-up fade-up-delay-2">
+                <header class="cv-card__head">
+                  <h3>Recent chat update</h3>
+                </header>
+                <ul class="cv-recent-list">
+                  <li>
+                    <p class="cv-recent__title">Lorem ipsum dolor si amet</p>
+                    <p class="cv-recent__meta"><span class="cv-recent__dot"></span>Today</p>
+                  </li>
+                  <li>
+                    <p class="cv-recent__title">Lorem ipsum dolor si amet</p>
+                    <p class="cv-recent__meta"><span class="cv-recent__dot"></span>Today</p>
+                  </li>
+                </ul>
+              </article>
+
+              <!-- Requests (512h) -->
+              <article class="cv-card cv-card--requests fade-up fade-up-delay-3">
+                <header class="cv-card__head">
+                  <h3>Requests</h3>
+                  <button class="cv-card__more" aria-label="More"><span class="icon-host" data-svg="arrow-right"></span></button>
+                </header>
+                <ul class="cv-requests">
+                  <li class="cv-request">
+                    <div class="cv-request__badges">
+                      <span class="cv-badge cv-badge--gray">HR request</span>
+                      <span class="cv-badge cv-badge--blue">In progress</span>
+                    </div>
+                    <p class="cv-request__title">Lorem ipsum si dolor amet</p>
+                    <p class="cv-request__meta">Updated 2 hours ago</p>
+                  </li>
+                  <li class="cv-request">
+                    <div class="cv-request__badges">
+                      <span class="cv-badge cv-badge--gray">HR request</span>
+                      <span class="cv-badge cv-badge--blue">In progress</span>
+                    </div>
+                    <p class="cv-request__title">Lorem ipsum si dolor amet</p>
+                    <p class="cv-request__meta">Updated 2 hours ago</p>
+                  </li>
+                  <li class="cv-request">
+                    <div class="cv-request__badges">
+                      <span class="cv-badge cv-badge--gray">HR request</span>
+                      <span class="cv-badge cv-badge--blue">In progress</span>
+                    </div>
+                    <p class="cv-request__title">Lorem ipsum si dolor amet</p>
+                    <p class="cv-request__meta">Updated 2 hours ago</p>
+                  </li>
+                </ul>
+                <button class="cv-view-more">View more</button>
+              </article>
+
+            </div>
+
+            <!-- Column 3 -->
+            <div class="canvas-col">
+
+              <!-- Requests (512h) -->
+              <article class="cv-card cv-card--requests fade-up fade-up-delay-1">
+                <header class="cv-card__head">
+                  <h3>Requests</h3>
+                  <button class="cv-card__more" aria-label="More"><span class="icon-host" data-svg="arrow-right"></span></button>
+                </header>
+                <ul class="cv-requests">
+                  <li class="cv-request">
+                    <div class="cv-request__badges">
+                      <span class="cv-badge cv-badge--gray">HR request</span>
+                      <span class="cv-badge cv-badge--blue">In progress</span>
+                    </div>
+                    <p class="cv-request__title">Lorem ipsum si dolor amet</p>
+                    <p class="cv-request__meta">Updated 2 hours ago</p>
+                  </li>
+                  <li class="cv-request">
+                    <div class="cv-request__badges">
+                      <span class="cv-badge cv-badge--gray">HR request</span>
+                      <span class="cv-badge cv-badge--blue">In progress</span>
+                    </div>
+                    <p class="cv-request__title">Lorem ipsum si dolor amet</p>
+                    <p class="cv-request__meta">Updated 2 hours ago</p>
+                  </li>
+                  <li class="cv-request">
+                    <div class="cv-request__badges">
+                      <span class="cv-badge cv-badge--gray">HR request</span>
+                      <span class="cv-badge cv-badge--blue">In progress</span>
+                    </div>
+                    <p class="cv-request__title">Lorem ipsum si dolor amet</p>
+                    <p class="cv-request__meta">Updated 2 hours ago</p>
+                  </li>
+                </ul>
+                <button class="cv-view-more">View more</button>
+              </article>
+
+              <!-- Quick links (344h) -->
+              <article class="cv-card cv-card--quick-links fade-up fade-up-delay-2">
+                <header class="cv-card__head">
+                  <h3>Quick links</h3>
+                  <button class="cv-card__more" aria-label="More"><span class="icon-host" data-svg="arrow-right"></span></button>
+                </header>
+                <div class="cv-quick-grid">
+                  <div class="cv-quick"><div class="cv-quick__img"></div><p>Lorem ipsum elementum do…</p></div>
+                  <div class="cv-quick"><div class="cv-quick__img"></div><p>Lorem ipsum elementum do…</p></div>
+                  <div class="cv-quick"><div class="cv-quick__img"></div><p>Lorem ipsum elementum do…</p></div>
+                  <div class="cv-quick"><div class="cv-quick__img"></div><p>Lorem ipsum elementum do…</p></div>
+                  <div class="cv-quick"><div class="cv-quick__img"></div><p>Lorem ipsum elementum do…</p></div>
+                  <div class="cv-quick"><div class="cv-quick__img"></div><p>Lorem ipsum elementum do…</p></div>
+                </div>
+              </article>
+
+            </div>
+
+          </div>
+        </div>
+        <div class="inbox-bottom-gradient"></div>
+      </section>
+
+      <!-- ============== INBOX VIEW ============== -->
+      <section class="inbox-view view" data-view="inbox" aria-label="Inbox">
+        <div class="inbox-view__inner">
+          <h1 class="inbox-title fade-up">Inbox</h1>
+          <div class="inbox-controls fade-up fade-up-delay-1">
+            <div class="inbox-controls__lh">
+              <div class="tabs">
+                <button class="tab is-active">To-dos (10)</button>
+                <button class="tab">Everything else (13)</button>
+              </div>
+              <button class="btn-ghost">
+                <span class="icon-host" data-svg="filter"></span>
+                Filters
+              </button>
+            </div>
+            <button class="btn-ghost">
+              <span class="icon-host" data-svg="arrow-up-down"></span>
+              Prioritized by AI
+              <span class="icon-host" data-svg="chevron-down"></span>
+            </button>
+          </div>
+
+          <div class="inbox-cards">
+
+            <!-- Card 1: HR approval — overdue, with Decline / Approve actions -->
+            <article class="todo-card fade-up fade-up-delay-2">
+              <header class="todo-card__head">
+                <span class="todo-card__kicker">
+                  <span class="icon-host" data-icon="arrow-up-right"></span>
+                  HR approval
+                </span>
+                <span class="todo-card__status todo-card__status--error">
+                  <span class="status-dot"></span>
+                  Overdue 1 day
+                </span>
+              </header>
+              <h3 class="todo-card__title">REQ0002939 - Compensation change request</h3>
+              <div class="todo-card__body">
+                <img class="todo-card__avatar" src="./assets/img/avatar-hr.png" alt="" />
+                <p class="todo-card__copy">
+                  Scott Miller requests a compensation increase of $5,000 for Robin Johnson. Submitted December 20 with a January 3 deadline, currently awaiting approval. Lorem ipsum dolor sit am…
+                  <a class="todo-card__more" href="#">Read more</a>
+                </p>
+              </div>
+              <footer class="todo-card__actions">
+                <button class="todo-btn">Decline</button>
+                <button class="todo-btn todo-btn--primary">Approve</button>
+              </footer>
+            </article>
+
+            <!-- Card 2: IT approval — due in 3 days, view-details action -->
+            <article class="todo-card fade-up fade-up-delay-2">
+              <header class="todo-card__head">
+                <span class="todo-card__kicker">
+                  <span class="icon-host" data-icon="arrow-up-right"></span>
+                  IT approval
+                </span>
+                <span class="todo-card__status todo-card__status--warn">
+                  <span class="status-dot"></span>
+                  Due in 3 days
+                </span>
+              </header>
+              <h3 class="todo-card__title">RITM0003917 - New laptop request</h3>
+              <div class="todo-card__body">
+                <img class="todo-card__avatar todo-card__avatar--square" src="./assets/img/macbook.png" alt="" />
+                <p class="todo-card__copy">
+                  Rachel Jones requested a MacBook Pro 16" ($2,800). Submitted December 20 with a January 3 deadline, currently awaiting approval. Lorem ipsum dolor sit amet, consectetur adipiscing el am…
+                  <a class="todo-card__more" href="#">Read more</a>
+                </p>
+              </div>
+              <footer class="todo-card__actions">
+                <a class="todo-link" href="#">View details <span class="icon-host" data-icon="arrow-up-right"></span></a>
+              </footer>
+            </article>
+
+            <!-- Card 3: HR approval — due in 10 days -->
+            <article class="todo-card fade-up fade-up-delay-3">
+              <header class="todo-card__head">
+                <span class="todo-card__kicker">
+                  <span class="icon-host" data-icon="arrow-up-right"></span>
+                  HR approval
+                </span>
+                <span class="todo-card__status todo-card__status--low">
+                  <span class="status-dot"></span>
+                  Due in 10 days
+                </span>
+              </header>
+              <h3 class="todo-card__title">REQ0002940 - Promotion approval</h3>
+              <div class="todo-card__body">
+                <img class="todo-card__avatar" src="./assets/img/avatar-hr.png" alt="" />
+                <p class="todo-card__copy">
+                  Maria Lopez has nominated Daniel Kim for promotion to Senior Engineer effective Q1. Submitted December 22 with a January 10 review deadline. Lorem ipsum dolor sit amet…
+                  <a class="todo-card__more" href="#">Read more</a>
+                </p>
+              </div>
+              <footer class="todo-card__actions">
+                <button class="todo-btn">Decline</button>
+                <button class="todo-btn todo-btn--primary">Approve</button>
+              </footer>
+            </article>
+
+            <!-- Card 4: Travel request -->
+            <article class="todo-card fade-up fade-up-delay-3">
+              <header class="todo-card__head">
+                <span class="todo-card__kicker">
+                  <span class="icon-host" data-icon="arrow-up-right"></span>
+                  Travel approval
+                </span>
+                <span class="todo-card__status todo-card__status--low">
+                  <span class="status-dot"></span>
+                  Due in 12 days
+                </span>
+              </header>
+              <h3 class="todo-card__title">TRV0008212 - Q1 customer trip</h3>
+              <div class="todo-card__body">
+                <img class="todo-card__avatar" src="./assets/img/avatar-hr.png" alt="" />
+                <p class="todo-card__copy">
+                  Andrea requests approval for a 4-day customer onsite in Tokyo, January 14–17. Total estimated spend $4,200. Lorem ipsum dolor sit amet, consectetur adipiscing el am…
+                  <a class="todo-card__more" href="#">Read more</a>
+                </p>
+              </div>
+              <footer class="todo-card__actions">
+                <a class="todo-link" href="#">View details <span class="icon-host" data-icon="arrow-up-right"></span></a>
+              </footer>
+            </article>
+
+            <!-- Card 5: Knowledge article review -->
+            <article class="todo-card fade-up fade-up-delay-3">
+              <header class="todo-card__head">
+                <span class="todo-card__kicker">
+                  <span class="icon-host" data-icon="arrow-up-right"></span>
+                  Article review
+                </span>
+                <span class="todo-card__status todo-card__status--low">
+                  <span class="status-dot"></span>
+                  Due in 18 days
+                </span>
+              </header>
+              <h3 class="todo-card__title">KB0123091 - Updated remote work policy</h3>
+              <div class="todo-card__body">
+                <img class="todo-card__avatar" src="./assets/img/avatar-hr.png" alt="" />
+                <p class="todo-card__copy">
+                  Draft of the updated remote work policy is ready for legal review. Submitted December 28 with a January 20 publish deadline. Lorem ipsum dolor sit amet, consectetur…
+                  <a class="todo-card__more" href="#">Read more</a>
+                </p>
+              </div>
+              <footer class="todo-card__actions">
+                <a class="todo-link" href="#">View details <span class="icon-host" data-icon="arrow-up-right"></span></a>
+              </footer>
+            </article>
+
+          </div>
+
+          <!-- Pagination row -->
+          <div class="inbox-pagination fade-up fade-up-delay-3">
+            <p class="inbox-pagination__count">Showing items 1–5 of 10</p>
+            <div class="inbox-pagination__controls">
+              <button class="page-btn" aria-label="Previous">
+                <span class="icon-host" data-icon="chevron-left"></span>
+              </button>
+              <button class="page-btn page-btn--active">1</button>
+              <button class="page-btn">2</button>
+              <button class="page-btn" aria-label="Next">
+                <span class="icon-host" data-svg="chevron-right"></span>
+              </button>
+            </div>
+          </div>
+
+        </div>
+        <div class="inbox-bottom-gradient"></div>
+      </section>
+
+      <!-- Footer omnibar (inbox state, at-rest) -->
+      <div class="omnibar-footer" style="display:none;">
+        <div class="omnibar-footer__bar">
+          <button class="btn-ghost btn-circle" aria-label="Back">
+            <span class="icon-host" data-icon="chevron-left"></span>
+          </button>
+          <div class="omnibar-footer__field">
+            <div class="omnibar-footer__text">
+              <span>Ask Otto,</span>
+              <span>or search for anything</span>
+            </div>
+            <button class="action-pill" aria-label="Send">
+              <span class="icon-host" data-svg="send"></span>
+            </button>
+          </div>
+        </div>
+        <div class="omnibar-footer__spacer"></div>
+      </div>
+
+      <!-- ============== OMNIBAR ALT STATES ============== -->
+
+      <!-- DOCK state: bottom-center at-rest tray (gray) wrapping a white pill -->
+      <div class="state-omni-dock" aria-hidden="true">
+        <div class="state-omni-dock__tray">
+          <button class="state-omni-dock__back" aria-label="Back">
+            <span class="icon-host" data-svg="chevron-left"></span>
+          </button>
+          <div class="state-omni-dock__pill">
+            <div class="state-omni-dock__field">
+              <span class="state-omni-dock__prefix">Ask Otto,</span>
+              <span class="state-omni-dock__placeholder">or search for anything</span>
+            </div>
+            <button class="state-omni-dock__send mic-btn" data-omni-host="omni-dock" data-omni-wave-host="omni-dock" aria-label="Voice input">
+              <span class="mic-icon icon-host" data-svg="microphone"></span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- TRANSCRIPT state: bottom-right card.
+           Same outer mask + inner pill structure as the hero so it inherits
+           the gradient/voice-mode behavior automatically. -->
+      <div class="state-omni-transcript" aria-hidden="true">
+        <div class="omnibar state-omni-transcript__pill">
+          <div class="omnibar__inner state-omni-transcript__inner">
+            <div class="state-omni-transcript__chat" id="omni-transcript-chat"></div>
+            <div class="omnibar__actions">
+              <div class="omnibar__lh">
+                <button class="btn-ghost btn-circle" aria-label="Add">
+                  <span class="icon-host" data-svg="plus"></span>
+                </button>
+              </div>
+              <button class="action-pill mic-btn" data-omni-host="omni-transcript" data-omni-wave-host="omni-transcript" data-omni-wave-scale="1" aria-label="Voice input">
+                <span class="mic-icon icon-host" data-svg="microphone"></span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ORB state: centered floating circle.
+           Same mask layering as the dock — outer #EDE9EC tray hosts the
+           rotating gradient pseudos, inner white circle holds the icon. -->
+      <div class="state-omni-orb" aria-hidden="true">
+        <button class="state-omni-orb__tray mic-btn" data-omni-host="omni-orb" aria-label="Voice input">
+          <!-- Waveform mounts inside the inner white circle so it sits
+               above the gradient ring layer. -->
+          <span class="state-omni-orb__inner" data-omni-wave-host="omni-orb">
+            <span class="mic-icon icon-host" data-svg="microphone"></span>
+          </span>
+        </button>
+        <button class="state-omni-orb__dismiss" aria-label="Dismiss">×</button>
+      </div>
+
+    </main>
+
+    <!-- Right scrollbar rail -->
+    <div class="scrollbar-rail" aria-hidden="true">
+      <div class="scrollbar-rail__thumb"></div>
+    </div>
+  </div>
+
+  <script type="module" src="./assets/js/app.js"></script>
+</body>
+</html>
