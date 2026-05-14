@@ -11,42 +11,6 @@
     "thumbnail": "/projects/ai-voice-demo/thumb.png"
   },
   {
-    "id": "NL-002",
-    "slug": "lotti-inspector",
-    "title": "LOTTI Inspector",
-    "desc": "Music curation tool for fitness instructors. Tag songs by BPM, intensity, and vibe. Generates class playlists from structured prompts.",
-    "category": "tools",
-    "date": "2025-10",
-    "stack": "TypeScript · Node.js"
-  },
-  {
-    "id": "NL-003",
-    "slug": "rebelboater-dashboard",
-    "title": "RebelBoater Dashboard",
-    "desc": "Marine utility platform for San Diego boaters. Tides, weather, fuel pricing, and marina availability in one view.",
-    "category": "tools",
-    "date": "2025-09",
-    "stack": "TypeScript · Maps API"
-  },
-  {
-    "id": "NL-004",
-    "slug": "local-llm-workspace",
-    "title": "Local LLM Workspace",
-    "desc": "Personal AIOS — local model routing, task queuing, and context window management running Ollama models with smart dispatch.",
-    "category": "tools",
-    "date": "2025-08",
-    "stack": "Ollama · Node.js"
-  },
-  {
-    "id": "NL-005",
-    "slug": "spectercraft-cms",
-    "title": "Spectercraft CMS",
-    "desc": "Headless content management layer with AI-assisted writing, structured field schemas, and multi-tenant publishing.",
-    "category": "tools",
-    "date": "2025-07",
-    "stack": "Claude API · TypeScript"
-  },
-  {
     "id": "NL-006",
     "slug": "content-generator-app",
     "title": "Scene Creator",
