@@ -17,7 +17,7 @@
     "desc": "3D scene composition tool. Build and customize product scenes with materials, lighting, and camera controls.",
     "category": "tools",
     "date": "2025-07",
-    "stack": "React · Tailwind · Claude API",
+    "stack": "React · p5.js · Vite",
     "thumbnail": "/projects/content-generator-app/thumb.png"
   }
 ]
